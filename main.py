@@ -8,13 +8,13 @@ app = Flask(__name__)  # inicializa a API
 Swagger(app)
 
 
-@app.route('/', methods=['GET'])
+@app.route('/uTube_Download', methods=['GET'])
 def index():
     """
     API Download yutube videos
     ---
     tags:
-      - uTube download videos
+      - Estus Flask
     parameters:
       - name: url
         in: path
