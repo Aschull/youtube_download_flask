@@ -1,39 +1,55 @@
-from flask import Flask
+from flask import Flask, Blueprint
 from flask.globals import request
 from flask.json import jsonify
+from flasgger import Swagger
 import pytube
 
 app = Flask(__name__)  # inicializa a API
+Swagger(app)
 
 
-@app.route('/')  # cria uma rota
-def main():
+@app.route('/', methods=['GET'])
+def index():
+    """
+    API Download yutube videos
+    ---
+    tags:
+      - uTube download videos
+    parameters:
+      - name: url
+        in: path
+        type: string
+        required: true
+        description: URL youtube
+    responses:
+      500:
+        description: Internal Server Error!
+      200:
+        description: Sucess!
+        schema:
+          id: url
+          properties:
+            url:
+              type: string
+              description: url
+              default: JSON
+
+    """
+    return youtube_download()
+
+
+def youtube_download():
     # Parametros inseridos formato JSON (Postman)
-    url = request.json['url']
 
+    url = request.json['url']
     youtube = pytube.YouTube(url)
 
     for stream in youtube.streams:
         print(stream)
 
-    from pytube import YouTube
-
-    youtube = YouTube(url)
-
     pytube.YouTube(url).streams.get_highest_resolution().download('_downloads')
 
-    # video = youtube.streams.get_highest_resolution()
-    # video.download('/Downloads')
-
-    # Retorna um resultado em JSON
-
     return jsonify('Sucesso')
-
-
-# return jsonify({'resultado': resultado, 'media': media})
-
-# Retorna resultado por um template html
-# return render_template('index.html', media=media, resultado=resultado)
 
 
 if __name__ == '__main__':
